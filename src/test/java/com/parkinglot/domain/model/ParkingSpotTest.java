@@ -12,7 +12,7 @@ public class ParkingSpotTest {
         assertNotNull(parkingSpot);
         assertNotNull(parkingSpot.vehicleType());
         assertNotNull(parkingSpot.available());
-        assertNotNull(parkingSpot.floorNumber());
+        assertNotNull(parkingSpot.spotId());
     }
 
     @Test
@@ -20,10 +20,10 @@ public class ParkingSpotTest {
         IllegalArgumentException iaeNullVehicleType = assertThrows(IllegalArgumentException.class, () -> new ParkingSpot(null, 1L, Boolean.TRUE));
         assertEquals("Vehicle Type cannot be null", iaeNullVehicleType.getMessage());
 
-        IllegalArgumentException iaeNullFloorNumber = assertThrows(IllegalArgumentException.class, () -> new ParkingSpot(VehicleType.CAR, null, Boolean.TRUE));
-        assertEquals("Floor Number cannot be null", iaeNullFloorNumber.getMessage());
-        IllegalArgumentException iaeNegativeFloorNumber = assertThrows(IllegalArgumentException.class, () -> new ParkingSpot(VehicleType.CAR, -1L, Boolean.TRUE));
-        assertEquals("Floor Number cannot be negative value", iaeNegativeFloorNumber.getMessage());
+        IllegalArgumentException iaeNullSpotId = assertThrows(IllegalArgumentException.class, () -> new ParkingSpot(VehicleType.CAR, null, Boolean.TRUE));
+        assertEquals("Spot Id cannot be null", iaeNullSpotId.getMessage());
+        IllegalArgumentException iaeNegativeSpotId = assertThrows(IllegalArgumentException.class, () -> new ParkingSpot(VehicleType.CAR, -1L, Boolean.TRUE));
+        assertEquals("Spot Id cannot be negative value", iaeNegativeSpotId.getMessage());
 
         IllegalArgumentException iaeNullAvailable = assertThrows(IllegalArgumentException.class, () -> new ParkingSpot(VehicleType.CAR, 1L, null));
         assertEquals("Available cannot be null", iaeNullAvailable.getMessage());
