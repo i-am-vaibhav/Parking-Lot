@@ -3,7 +3,7 @@ package com.parkinglot.domain.model;
 import java.util.List;
 
 public record ParkingFloor(Long floorNumber, List<ParkingSpot> parkingSpots) {
-    public ParkingFloor{
+    public ParkingFloor {
         if (floorNumber == null) {
             throw new IllegalArgumentException("Floor Number cannot be null");
         }

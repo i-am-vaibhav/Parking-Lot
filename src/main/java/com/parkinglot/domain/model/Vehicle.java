@@ -1,6 +1,6 @@
 package com.parkinglot.domain.model;
 
-public record Vehicle(String numberPlate, VehicleType vehicleType) {
+public record Vehicle(Long id, String numberPlate, VehicleType vehicleType) {
 
     // 1. Non BH Series Pattern (e.g., CG19GC9922)
     private static final String STANDARD_REGEX = "^[A-Z]{2}\\d{2}[A-HJ-NP-Z]{1,3}\\d{4}$";
