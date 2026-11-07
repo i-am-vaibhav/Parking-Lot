@@ -34,7 +34,7 @@ public class TicketRepositoryAdapter implements TicketRepositoryPort {
         if (vehicleNumber == null || vehicleNumber.isBlank()) {
             throw new IllegalArgumentException("Vehicle Number cannot be null or empty");
         }
-        return springDataTicketRepository.findByVehicle_NumberPlateAndStatus(vehicleNumber, TicketStatus.ACTIVE);
+        return springDataTicketRepository.findByVehicle_NumberPlateAndStatus(vehicleNumber, TicketStatus.ACTIVE).map(mapper::toTicket);
     }
 
 }
