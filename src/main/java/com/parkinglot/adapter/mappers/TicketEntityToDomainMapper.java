@@ -7,6 +7,10 @@ import com.parkinglot.domain.model.Vehicle;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+
 @Mapper
 public interface TicketEntityToDomainMapper {
 
@@ -20,5 +24,21 @@ public interface TicketEntityToDomainMapper {
     TicketEntity toTicketEntity(Ticket ticket);
 
     VehicleEntity toVehicleEntity(Vehicle vehicle);
+
+    default LocalDateTime map(Date date) {
+        if (date == null) {
+            return null;
+        }
+        return date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+    }
+
+    default Date map(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return null;
+        }
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
 
 }

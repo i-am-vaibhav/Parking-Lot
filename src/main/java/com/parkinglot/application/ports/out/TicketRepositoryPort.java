@@ -8,4 +8,6 @@ public interface TicketRepositoryPort {
     Ticket save(Ticket ticket);
 
     Optional<Ticket> findByTicketId(Long ticketId);
+
+    Optional<Ticket> activeTicketsByVehicleNumber(String vehicleNumber);
 }

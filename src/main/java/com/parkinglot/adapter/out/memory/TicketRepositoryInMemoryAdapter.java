@@ -22,4 +22,16 @@ public class TicketRepositoryInMemoryAdapter implements TicketRepositoryPort {
     public Optional<Ticket> findByTicketId(Long ticketId) {
         return Optional.ofNullable(parkingLotINMemoryDB.getTickets().getOrDefault(ticketId, null));
     }
+
+    @Override
+    public Optional<Ticket> activeTicketsByVehicleNumber(String vehicleNumber) {
+        if (vehicleNumber == null || vehicleNumber.isBlank()) {
+            throw new IllegalArgumentException("Vehicle Number cannot be null or empty");
+        }
+        return parkingLotINMemoryDB.getTickets().values()
+                .stream()
+                .filter(ticket -> ticket.vehicle().numberPlate().equals(vehicleNumber))
+                .findFirst();
+    }
+
 }

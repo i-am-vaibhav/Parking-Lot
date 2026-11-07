@@ -7,9 +7,13 @@ import com.parkinglot.application.ports.out.ParkingSpotRepositoryPort;
 import com.parkinglot.application.ports.out.TicketRepositoryPort;
 import com.parkinglot.application.strategy.FareCalculationStrategy;
 import com.parkinglot.domain.model.Ticket;
+import com.parkinglot.domain.model.TicketStatus;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Map;
 
 public class ExitUseCaseService implements ExitUseCase {
@@ -25,26 +29,29 @@ public class ExitUseCaseService implements ExitUseCase {
     }
 
     @Override
+    @Transactional
     public ExitResponse exit(Long ticketId) {
-        FareCalculationStrategy fareCalculationStrategy = fareCalculationStrategyMap
-                .get(resolvePricingStrategy());
         Ticket ticket = ticketRepository.findByTicketId(ticketId)
                 .orElseThrow(() -> new TicketNotFoundException("Ticket not found with " + ticketId));
-        ticket = ticket.updateAmount(
-                fareCalculationStrategy.calculate(ticket.entryTime(),
-                        ticket.vehicle().vehicleType())).closeTicket();
-        parkingSpotRepository.save(ticket.parkingSpot().unblockParkingSpot());
-        Ticket savedTicket = ticketRepository.save(ticket);
+        if (ticket.status().equals(TicketStatus.ACTIVE)){
+            FareCalculationStrategy fareCalculationStrategy = fareCalculationStrategyMap
+                    .get(resolvePricingStrategy(ticket.entryTime()));
+            ticket = ticket.updateAmount(
+                    fareCalculationStrategy.calculate(ticket.entryTime(),
+                            ticket.vehicle().vehicleType())).closeTicket();
+            parkingSpotRepository.save(ticket.parkingSpot().unblockParkingSpot());
+            ticket = ticketRepository.save(ticket);
+        }
         return ExitResponse.builder()
-                .exitTime(savedTicket.exitTime())
+                .exitTime(ticket.exitTime())
                 .amount(ticket.amount())
                 .ticketId(ticketId)
                 .entryTime(ticket.entryTime())
                 .build();
     }
 
-    private String resolvePricingStrategy() {
-        DayOfWeek today = LocalDate.now().getDayOfWeek();
+    private String resolvePricingStrategy(Date date) {
+        DayOfWeek today = LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault()).getDayOfWeek();
 
         if (today == DayOfWeek.SATURDAY ||
                 today == DayOfWeek.SUNDAY) {

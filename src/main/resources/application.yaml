@@ -3,7 +3,7 @@ spring:
     name: Parking Lot
 
   profiles:
-    active: default, memory
+    active: default, jpa
 
   jpa:
     hibernate:

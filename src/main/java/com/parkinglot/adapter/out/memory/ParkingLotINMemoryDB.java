@@ -21,17 +21,15 @@ public class ParkingLotINMemoryDB {
 
     public ParkingLotINMemoryDB() {
         List<ParkingFloor> floors = new ArrayList<>();
+        long j = 0;
         for (long i = 0; i < 2; i++) {
             List<ParkingSpot> parkingSpots = new ArrayList<>();
-            for (long j = 1; j <= 2; j++) {
-                parkingSpots.add(new ParkingSpot(VehicleType.CAR, j, true));
-            }
-            for (long j = 3; j <= 4; j++) {
-                parkingSpots.add(new ParkingSpot(VehicleType.BIKE, j, true));
-            }
-            for (long j = 5; j <= 6; j++) {
-                parkingSpots.add(new ParkingSpot(VehicleType.TRUCK, j, true));
-            }
+            parkingSpots.add(new ParkingSpot(VehicleType.CAR, ++j, true));
+            parkingSpots.add(new ParkingSpot(VehicleType.CAR, ++j, true));
+            parkingSpots.add(new ParkingSpot(VehicleType.BIKE, ++j, true));
+            parkingSpots.add(new ParkingSpot(VehicleType.BIKE, ++j, true));
+            parkingSpots.add(new ParkingSpot(VehicleType.TRUCK, ++j, true));
+            parkingSpots.add(new ParkingSpot(VehicleType.TRUCK, ++j, true));
             floors.add(new ParkingFloor(i, parkingSpots));
         }
         this.parkingLot = new ParkingLot(1L,"MyParkingLot",  floors);

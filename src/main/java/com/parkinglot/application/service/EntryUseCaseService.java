@@ -8,14 +8,13 @@ import com.parkinglot.application.ports.out.ParkingSpotRepositoryPort;
 import com.parkinglot.application.ports.out.TicketRepositoryPort;
 import com.parkinglot.application.strategy.SpotAllocationStrategy;
 import com.parkinglot.domain.model.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 public class EntryUseCaseService implements EntryUseCase {
-
-    public static final String FIRST =
-            "First";
 
     private final TicketRepositoryPort ticketRepository;
 
@@ -32,24 +31,28 @@ public class EntryUseCaseService implements EntryUseCase {
     }
 
     @Override
+    @Transactional
     public EntryResponse entry(EntryRequest entryRequest) {
-        var spotAllocationStrategy = spotAllocationStrategyMap
-                .getOrDefault(
-                        entryRequest.getPreferredSlotStrategy(),
-                        spotAllocationStrategyMap.get(FIRST));
-        ParkingSpot spot = spotAllocationStrategy
-                .findSpot(entryRequest.getParkingLotId(), VehicleType.valueOf(entryRequest.getVehicleType()))
-                .orElseThrow(() -> new ParkingSpotUnavailableException("Parking Spot Unavailable")).blockParkingSpot();
-        Vehicle vehicle = new Vehicle(null, entryRequest.getNumberPlate(), VehicleType.valueOf(entryRequest.getVehicleType()));
-        Ticket ticket = new Ticket(null, new Date(), null, vehicle, spot, 0d, TicketStatus.ACTIVE);
-        parkingSpotRepository.save(spot);
-        Ticket savedTicket = ticketRepository.save(ticket);
-
+        Optional<Ticket> ticket = ticketRepository.activeTicketsByVehicleNumber(entryRequest.getNumberPlate());
+        if (ticket.isEmpty()){
+            var spotAllocationStrategy = spotAllocationStrategyMap
+                    .getOrDefault(
+                            entryRequest.getPreferredSlotStrategy(),
+                            spotAllocationStrategyMap.get("First"));
+            ParkingSpot spot = spotAllocationStrategy
+                    .findSpot(entryRequest.getParkingLotId(), VehicleType.valueOf(entryRequest.getVehicleType()))
+                    .orElseThrow(() -> new ParkingSpotUnavailableException("Parking Spot Unavailable")).blockParkingSpot();
+            Vehicle vehicle = new Vehicle(null, entryRequest.getNumberPlate(), VehicleType.valueOf(entryRequest.getVehicleType()));
+            Ticket newTicket = new Ticket(null, new Date(), null, vehicle, spot, 0d, TicketStatus.ACTIVE);
+            parkingSpotRepository.save(spot);
+            ticket = Optional.of(ticketRepository.save(newTicket));
+        }
+        Ticket processedTicket = ticket.get();
         return EntryResponse.builder()
-                .entryTime(savedTicket.entryTime().toString())
-                .ticketId(savedTicket.id().toString())
-                .spotId(spot.spotId())
-                .vehicleNumberPlate(vehicle.numberPlate())
+                .entryTime(processedTicket.entryTime().toString())
+                .ticketId(processedTicket.id().toString())
+                .spotId(processedTicket.parkingSpot().spotId())
+                .vehicleNumberPlate(processedTicket.vehicle().numberPlate())
                 .build();
     }
 }

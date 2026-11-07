@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/parkinglot")
+@RequestMapping("/api/parking")
 public class ParkingLotController {
 
     private final FindAvailableSlotsUseCase findAvailableSlotsUseCase;

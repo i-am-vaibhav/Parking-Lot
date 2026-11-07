@@ -4,6 +4,7 @@ import com.parkinglot.adapter.mappers.TicketEntityToDomainMapper;
 import com.parkinglot.adapter.out.persistence.repository.SpringDataTicketRepository;
 import com.parkinglot.application.ports.out.TicketRepositoryPort;
 import com.parkinglot.domain.model.Ticket;
+import com.parkinglot.domain.model.TicketStatus;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Optional;
@@ -27,4 +28,13 @@ public class TicketRepositoryAdapter implements TicketRepositoryPort {
     public Optional<Ticket> findByTicketId(Long ticketId) {
         return springDataTicketRepository.findById(ticketId).map(mapper::toTicket);
     }
+
+    @Override
+    public Optional<Ticket> activeTicketsByVehicleNumber(String vehicleNumber) {
+        if (vehicleNumber == null || vehicleNumber.isBlank()) {
+            throw new IllegalArgumentException("Vehicle Number cannot be null or empty");
+        }
+        return springDataTicketRepository.findByVehicle_NumberPlateAndStatus(vehicleNumber, TicketStatus.ACTIVE);
+    }
+
 }
