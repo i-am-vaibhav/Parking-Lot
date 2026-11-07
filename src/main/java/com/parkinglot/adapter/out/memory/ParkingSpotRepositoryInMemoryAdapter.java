@@ -4,7 +4,6 @@ import com.parkinglot.application.ports.out.ParkingSpotRepositoryPort;
 import com.parkinglot.domain.model.ParkingSpot;
 
 import java.util.List;
-import java.util.Optional;
 
 public class ParkingSpotRepositoryInMemoryAdapter implements ParkingSpotRepositoryPort {
 
@@ -34,15 +33,4 @@ public class ParkingSpotRepositoryInMemoryAdapter implements ParkingSpotReposito
                 });
     }
 
-    @Override
-    public Optional<ParkingSpot> findById(String spotId) {
-        Long id = Long.valueOf(spotId);
-
-        return parkingLotINMemoryDB.getParkingLot()
-                .floors()
-                .stream()
-                .flatMap(floor -> floor.parkingSpots().stream())
-                .filter(spot -> spot.spotId().equals(id))
-                .findFirst();
-    }
 }

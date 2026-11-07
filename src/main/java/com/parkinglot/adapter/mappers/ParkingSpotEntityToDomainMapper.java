@@ -16,6 +16,7 @@ public interface ParkingSpotEntityToDomainMapper {
     @Mapping(target = "parkingFloor", ignore = true)
     ParkingSpotEntity toParkingSpotEntity(ParkingSpot parkingSpot);
 
+    @Mapping(target = "id", source = "spotId")
     @Mapping(target = "parkingFloor", ignore = true)
     void updateEntity(
             ParkingSpot parkingSpot,

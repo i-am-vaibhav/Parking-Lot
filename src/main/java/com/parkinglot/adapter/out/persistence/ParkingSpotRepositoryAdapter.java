@@ -1,13 +1,10 @@
 package com.parkinglot.adapter.out.persistence;
 
 import com.parkinglot.adapter.mappers.ParkingSpotEntityToDomainMapper;
-import com.parkinglot.adapter.out.persistence.entitiy.ParkingSpotEntity;
 import com.parkinglot.adapter.out.persistence.repository.SpringDataParkingSpotRepository;
 import com.parkinglot.application.ports.out.ParkingSpotRepositoryPort;
 import com.parkinglot.domain.model.ParkingSpot;
 import org.mapstruct.factory.Mappers;
-
-import java.util.Optional;
 
 public class ParkingSpotRepositoryAdapter implements ParkingSpotRepositoryPort {
 
@@ -28,9 +25,4 @@ public class ParkingSpotRepositoryAdapter implements ParkingSpotRepositoryPort {
                 });
     }
 
-    @Override
-    public Optional<ParkingSpot> findById(String spotId) {
-        Optional<ParkingSpotEntity> parkingSpot = parkingSpotRepository.findById(Long.valueOf(spotId));
-        return parkingSpot.map(mapper::toParkingSpot);
-    }
 }
