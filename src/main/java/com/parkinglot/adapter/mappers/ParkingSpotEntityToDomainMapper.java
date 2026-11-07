@@ -9,13 +9,6 @@ import org.mapstruct.MappingTarget;
 @Mapper
 public interface ParkingSpotEntityToDomainMapper {
 
-    @Mapping(target = "spotId", source = "id")
-    ParkingSpot toParkingSpot(ParkingSpotEntity floorEntity);
-
-    @Mapping(target = "id", source = "spotId")
-    @Mapping(target = "parkingFloor", ignore = true)
-    ParkingSpotEntity toParkingSpotEntity(ParkingSpot parkingSpot);
-
     @Mapping(target = "id", source = "spotId")
     @Mapping(target = "parkingFloor", ignore = true)
     void updateEntity(
